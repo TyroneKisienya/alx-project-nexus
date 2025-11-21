@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, filters
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 # Create your views here.
 
@@ -12,6 +13,9 @@ class CategoryViewset(viewsets.ModelViewSet):
 class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all(). order_by("id")
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    #filter
     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
 
     #sort
