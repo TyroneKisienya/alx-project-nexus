@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Product
+from .models import Category, Product, Order, OrderItem
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,3 +13,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
         #category_id = used for POST/PUT
         #category = used for requests GET
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'product', 'order', 'quantity', 'price']
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, read_only = True)
+    class Meta:
+        model = Order
+        fields  =['id', 'user', 'status', 'total_amount', 'created_at', 'updated_at', 'items']

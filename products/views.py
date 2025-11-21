@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, filters
-from .models import Category, Product
-from .serializers import CategorySerializer, ProductSerializer
+from .models import Category, Product, Order, OrderItem
+from .serializers import CategorySerializer, ProductSerializer, OrderItemSerializer, OrderSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 # Create your views here.
@@ -11,7 +11,7 @@ class CategoryViewset(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
 class ProductViewset(viewsets.ModelViewSet):
-    queryset = Product.objects.all(). order_by("id")
+    queryset = Product.objects.all().order_by("id")
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -31,5 +31,40 @@ class ProductViewset(viewsets.ModelViewSet):
         category_id = self.request.query_params.get("category")
         if category_id:
             queryset = queryset.filter(category_id = category_id)
+        
+        return queryset
+    
+class OrderViewset(viewsets.ModelViewSet):
+    queryset = Order.objects.all().order_by('created_at')
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+
+    ordering_fields = ['created_at']
+
+    search_fields = ['status', 'user__username']
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Order.objects.all()
+        return Order.objects.filter(user=self.request.user)
+
+    
+class OrderItemviewset(viewsets.ModelViewSet):
+    queryset = OrderItem.objects.all().order_by('order')
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    filter_backends = [filters.SearchFilter]
+
+    search_fields = ['product__name']
+
+    def get_queryset(self):
+        queryset = OrderItem.objects.all(). order_by('order')
+
+        order_id = self.request.query_params.get('order')
+        if order_id:
+            queryset = queryset.filter(order_id=order_id)
         
         return queryset

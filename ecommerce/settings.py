@@ -147,7 +147,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "ecommerce.pagination.DefaultPagination",
     "PAGE_SIZE": 10,
 
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly",
+                                   "rest_framework.permissions.IsAuthenticated"],
 
     "DEFAULT_FILTER_BACKENDS": [
         "rest_framework.filters.OrderingFilter",
