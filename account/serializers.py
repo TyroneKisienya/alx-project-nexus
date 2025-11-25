@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .password_utils import verify_password_reset_token
 
 User = get_user_model()
 
@@ -39,3 +40,30 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 instance.set_password(password)
                 instance.save(update_field=['password'])
             return instance
+        
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        user = User.objects.filter(email=value).first()
+        if not user:
+            raise serializers.ValidationError("User does not exist")
+        if not user.is_verified:
+            raise serializers.ValidationError("Email is not verified")
+        return value
+    
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    new_password = serializers.CharField(write_only=True)
+    confrim_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data["new_password"] != data["confirm_password"]:
+            raise serializers.ValidationError({"passwords": "Not matching"})
+        
+        user_id, email = verify_password_reset_token(data["token"])
+        if not user_id:
+            raise serializers.ValidationError({"oken": "Expired or Invalid token"})
+        data["user_id"] = user_id
+        data["email"] = email
+        return data

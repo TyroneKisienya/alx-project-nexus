@@ -43,6 +43,8 @@ INSTALLED_APPS = [
 
     'rest_framework_simplejwt',
 
+    'rest_framework_simplejwt.token_blacklist',
+
     'drf_yasg',
 
     'drf_spectacular',
@@ -182,4 +184,12 @@ SPECTACULAR_SETTINGS = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKEN": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+AUTH_USER_MODEL = "account.User"
+
+DEFAULT_FROM_EMAIL = "kisienyamishael@gmail.com"
+FRONTEND_URL = "http://localhost:5173"
