@@ -268,3 +268,299 @@ A structured Git commit workflow will guide development:
 ## Repo Link
 
 `https://github.com/TyroneKisienya/alx-project-nexus`
+
+# Documentation Build Process
+
+## ALX Project Nexus – E-Commerce Backend API
+
+A production-ready E-Commerce Backend API built with Django Rest Framework, featuring authentication, product management, orders, payments integration (Chapa), and cloud deployment on Render.
+
+## Project Overview
+
+This project was developed as part of the ALX Software Engineering Program – Project Nexus.
+The goal was to design and deploy a secure, scalable, real-world backend system following industry best practices, from local development to cloud deployment.
+
+The system exposes RESTful APIs that can be consumed by any frontend (Vue, React, Mobile Apps).
+
+## Development Journey & Process
+
+This project was built incrementally, following a step-by-step backend engineering workflow.
+
+### Step A – Project Initialization
+
+Technologies Chosen
+
+Python 3
+
+Django 5.x
+
+Django Rest Framework (DRF)
+
+PostgreSQL
+
+JWT Authentication
+
+Render (Deployment)
+
+Why Django + DRF?
+
+Built-in security
+
+Rapid development
+
+Strong ORM
+
+Industry adoption
+
+We initialized:
+
+django-admin startproject ecommerce
+
+### Step B – Database Design & Configuration
+
+Database: PostgreSQL
+
+We configured PostgreSQL both locally and for production using environment variables.
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=config("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=not DEBUG,
+    )
+}
+
+
+Used dj-database-url for deployment portability
+Managed migrations cleanly
+Avoided hard-coded credentials
+
+### Step C – Authentication & Email Verification
+
+Implemented a custom user model:
+
+AUTH_USER_MODEL = "account.User"
+
+Features
+
+JWT Authentication (SimpleJWT)
+
+Login & refresh tokens
+
+Email verification workflow
+
+Secure password handling
+
+#### Outcome:
+
+Secure authentication system
+
+Ready for frontend integration
+
+### Step D – Password Reset Flow
+
+Implemented:
+
+Forgot password
+
+Reset password via email
+
+Tokenized password reset links
+
+Followed safe security practices
+Prevented token reuse
+Ensured time-limited reset tokens
+
+### Step E – Admin & Role Awareness
+
+Admin users can see all orders
+
+Regular users only see their own data
+
+Django Admin enabled for management
+
+def get_queryset(self):
+    if self.request.user.is_staff:
+        return Order.objects.all()
+    return Order.objects.filter(user=self.request.user)
+
+
+#### Principle of Least Privilege applied
+
+### Step F – Products, Orders & Checkout
+Implemented Modules
+
+Categories
+
+Products
+
+Orders
+
+Order Items
+
+Checkout logic
+
+Checkout Highlights
+
+Atomic transactions
+
+Price calculation server-side
+
+Order integrity enforced
+
+@transaction.atomic
+def checkout(self, request):
+    ...
+
+
+Prevented race conditions
+Guaranteed consistency
+
+### Step G – Payments Integration (Chapa)
+
+We integrated Chapa Payment Gateway (sandbox mode).
+
+Why Chapa?
+
+Popular in Africa
+
+Secure API
+
+Suitable for real-world e-commerce
+
+Payment Flow
+
+Checkout creates order
+
+Payment initialized via Chapa API
+
+Redirect / callback handled
+
+Webhook verifies payment
+
+Order status updated
+
+Environment variables used:
+
+CHAPA_SECRET_KEY=...
+CHAPA_PUBLIC_KEY=...
+CHAPA_BASE_URL=https://api.chapa.co/v1
+
+
+Followed best practice: payments handled server-side
+
+### Step H – API Documentation
+
+Used drf-spectacular to auto-generate documentation.
+
+Documentation URLs
+
+Swagger UI
+
+/api/docs
+
+
+Redoc
+
+/api/redoc
+
+
+JWT authentication documented
+All endpoints self-describing
+
+### Step I – Deployment (Render)
+Why Render?
+
+Free tier for demos
+
+PostgreSQL support
+
+Simple CI/CD
+
+Industry-friendly
+
+Deployment Setup
+
+Gunicorn as WSGI server
+
+Whitenoise for static files
+
+Render PostgreSQL instance
+
+Environment variables for secrets
+
+gunicorn ecommerce.wsgi:application
+
+#### Important Lessons
+
+Never use localhost in production DB
+Always rely on DATABASE_URL
+Configure ALLOWED_HOSTS correctly
+Use .env & Render environment variables
+
+### Live URLs
+
+API Base URL
+
+https://alx-project-nexus-f8lw.onrender.com
+
+
+API Docs
+
+https://alx-project-nexus-f8lw.onrender.com/api/docs
+
+
+Admin
+
+https://alx-project-nexus-f8lw.onrender.com/admin/
+
+#### Security Best Practices Followed
+
+Environment variables for secrets
+
+JWT authentication
+
+Atomic DB transactions
+
+Role-based access control
+
+CSRF protection
+
+No sensitive data in repository
+
+### Tech Stack
+Layer	Technology
+Backend	Django 5, DRF
+Auth	JWT (SimpleJWT)
+Database	PostgreSQL
+Payments	Chapa
+Docs	drf-spectacular
+Deployment	Render
+Server	Gunicorn
+##### How to Run Locally
+git clone <https://github.com/TyroneKisienya/alx-project-nexus.git>
+cd alx-project-nexus
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+#### Final Notes
+
+This project simulates a real production backend workflow:
+
+Local → Production
+
+Errors → Debugging → Fixing
+
+Security-first mindset
+
+Clean architecture
+
+Ready for frontend integration
+Ready for scaling
+Real-world deployable backend
+
+### Author
+Tyrone Kisienya(Skai)
