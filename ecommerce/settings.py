@@ -33,7 +33,7 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1"
+    default="localhost,127.0.0.1,https://alx-project-nexus-x6e1.onrender.com"
 ).split(",")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -108,7 +108,10 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgres://ecommerce_user:postgresql@localhost:5432/ecommerce_db",
+        default=config(
+            "DATABASE_URL",
+            default="postgresql://ecommerce_user:postgresql@localhost:5432/ecommerce_db"
+        ),
         conn_max_age=600,
         ssl_require=not DEBUG,
     )
