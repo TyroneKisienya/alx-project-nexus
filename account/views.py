@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import RegisterSerializer, Userserializers, ProfileUpdateSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer
+from .serializers import RegisterSerializer, Userserializers, ProfileUpdateSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, AdminUserSerializer
 from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from .utils import verify_token, send_verification_email
 from .password_utils import validate_password_reset_token, create_password_reset_token
+from .permissions import IsAdminUserOnly
 
 # Create your views here.
 
@@ -73,9 +74,6 @@ class EmailVerificationViewset(viewsets.ViewSet):
 class PasswordResetViewset(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
 
-    # -----------------------------
-    # STEP 1: REQUEST RESET EMAIL
-    # -----------------------------
     @action(detail=False, methods=["post"], url_path="request")
     def request_reset(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -95,9 +93,6 @@ class PasswordResetViewset(viewsets.ViewSet):
             status=status.HTTP_200_OK
         )
 
-    # -------------------------------------------------------
-    # STEP 2: SUBMIT NEW PASSWORD (AFTER CLICKING RESET LINK)
-    # -------------------------------------------------------
     @action(detail=False, methods=["post"], url_path="confirm")
     def confirm_reset(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
@@ -123,3 +118,8 @@ class PasswordResetViewset(viewsets.ViewSet):
             {"message": "Password has been reset successfully."},
             status=status.HTTP_200_OK
         )
+
+class AdminUserViewset(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('date_joined')
+    serializer_class = AdminUserSerializer
+    permission_classes = [IsAdminUserOnly]

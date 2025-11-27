@@ -67,3 +67,17 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         data["user_id"] = user_id
         data["email"] = email
         return data
+
+class AdminUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "username",
+            "is_active",
+            "is_staff",
+            "is_verified",
+            "date_joined",
+        ]
+        read_only_fields = ["id", "date_joined"]

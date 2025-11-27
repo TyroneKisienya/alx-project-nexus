@@ -1,8 +1,14 @@
 from django.shortcuts import render
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, permissions 
 from .models import Category, Product, Order, OrderItem
-from .serializers import CategorySerializer, ProductSerializer, OrderItemSerializer, OrderSerializer
+from .serializers import CategorySerializer, ProductSerializer, OrderItemSerializer, OrderSerializer, CheckoutSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.db import transaction
+from decimal import Decimal
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.status import HTTP_201_CREATED
+
 
 # Create your views here.
 
@@ -49,6 +55,47 @@ class OrderViewset(viewsets.ModelViewSet):
         if self.request.user.is_staff:
             return Order.objects.all()
         return Order.objects.filter(user=self.request.user)
+    
+    @action(detail=False, methods=["post"], permission_classes = [permissions.IsAuthenticated])
+    @transaction.atomic
+    def checkout(self, request):
+        serializer = CheckoutSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+
+        items = serializer.validated_data["items"]
+        order = Order.objects.create(
+            user = request.user,
+            status = Order.STATUS_PENDING,
+            total_amount = 0,
+        )
+
+        total = Decimal("0.00")
+        for item in items:
+            product = Product.objects.select_for_update().get(id=item["product_id"])
+            quantity = item["quantity"]
+            price = product.price * quantity
+
+            OrderItem.objects.create(
+                order = order,
+                product = product,
+                quantity = quantity,
+                price = product.price,
+            )
+
+            total += price
+
+            order.total_amount = total
+            order.save()
+
+        return Response(
+            {
+                "message": "order created successfully",
+                "order_id": order.id,
+                "total": total,
+                "status": order.status,
+            },
+            status = HTTP_201_CREATED
+        )
 
     
 class OrderItemviewset(viewsets.ModelViewSet):

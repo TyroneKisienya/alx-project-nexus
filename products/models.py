@@ -31,6 +31,8 @@ class Product(models.Model):
         return self.name
 
 class Order(models.Model):
+    STATUS_PENDING = "Pending"
+    
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('paid', 'Paid'),
@@ -44,6 +46,13 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at  =models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        indexes = [
+            models.Index(fields=["status"]),
+            models.Index(fields=["created_at"])
+        ]
 
     def __str__(self):
         return f"order #{self.id} by {self.user.username}"

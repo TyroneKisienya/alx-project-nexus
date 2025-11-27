@@ -9,6 +9,12 @@ drf-spectacular==0.29.0
 drf-spectacular-sidecar==2025.10.1
 psycopg2-binary
 django-templated-email
+requests
+dj-database-url
+whitenoise
+python-decouple
+django-cors-headers
+
 
 #linux
 #sudo apt update
