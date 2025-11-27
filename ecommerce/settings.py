@@ -32,9 +32,8 @@ SECRET_KEY = config(
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS",
-    default="alx-project-nexus-f8lw.onrender.com"
-).split(",")
+    "ALLOWED_HOSTS"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
