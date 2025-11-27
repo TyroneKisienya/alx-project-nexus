@@ -33,7 +33,7 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
     "alx-project-nexus-f8lw.onrender.com",
-    default="alx-project-nexus-f8lw.onrender.com"
+    default="127.0.0.1"
 ).split(",")
 
 # SECURITY WARNING: don't run with debug turned on in production!

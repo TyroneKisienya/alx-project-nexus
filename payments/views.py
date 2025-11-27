@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 class InitializePaymentView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, order_id):
         order = Order.objects.get(id=order_id, user=request.user)

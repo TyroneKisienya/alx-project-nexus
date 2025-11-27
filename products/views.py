@@ -2,7 +2,6 @@ from django.shortcuts import render
 from rest_framework import viewsets, filters, permissions 
 from .models import Category, Product, Order, OrderItem
 from .serializers import CategorySerializer, ProductSerializer, OrderItemSerializer, OrderSerializer, CheckoutSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.db import transaction
 from decimal import Decimal
 from rest_framework.decorators import action
@@ -15,11 +14,13 @@ from rest_framework.status import HTTP_201_CREATED
 class CategoryViewset(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by("name")
     serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAdminUser]
+
 
 class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by("id")
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     #filter
     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
@@ -43,7 +44,7 @@ class ProductViewset(viewsets.ModelViewSet):
 class OrderViewset(viewsets.ModelViewSet):
     queryset = Order.objects.all().order_by('created_at')
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
 
@@ -101,7 +102,7 @@ class OrderViewset(viewsets.ModelViewSet):
 class OrderItemviewset(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all().order_by('order')
     serializer_class = OrderItemSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     filter_backends = [filters.SearchFilter]
 
