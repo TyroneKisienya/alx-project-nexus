@@ -267,5 +267,4 @@ A structured Git commit workflow will guide development:
 
 ## Repo Link
 
-*(Add your GitHub link here once created)*
 `https://github.com/TyroneKisienya/alx-project-nexus`
