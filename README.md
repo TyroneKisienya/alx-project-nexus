@@ -562,5 +562,16 @@ Ready for frontend integration
 Ready for scaling
 Real-world deployable backend
 
+### Paths
+admin/
+api/schema/
+api/docs
+api/redoc
+api/auth/login/
+api/auth/refresh/
+api/
+api/auth/
+api/payments
+
 ### Author
 Tyrone Kisienya(Skai)
